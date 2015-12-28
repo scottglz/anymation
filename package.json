@@ -23,5 +23,9 @@
   "devDependencies": {
     "coverify": "^1.4.1",
     "tape": "^4.4.0"
+  },
+  "repository": {
+    "type": "git",
+    "url":  "https://github.com/scottglz/anymation"
   }
 }

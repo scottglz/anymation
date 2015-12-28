@@ -1,0 +1,27 @@
+{
+  "name": "animation",
+  "version": "0.1.0",
+  "description": "Simple & easy animation/tweener",
+  "main": "index.js",
+  "scripts": {
+    "test": "tape test/*.js",
+    "cover": "browserify -t coverify test/index-test.js --bare | node | coverify"
+  },
+  "keywords": [
+    "animation",
+    "tweening",
+    "tween",
+    "tweener",
+    "animate"
+  ],
+  "author": "Scott Glazer",
+  "license": "MIT",
+  "dependencies": {
+    "extend": "^3.0.0",
+    "right-now": "^1.0.0"
+  },
+  "devDependencies": {
+    "coverify": "^1.4.1",
+    "tape": "^4.4.0"
+  }
+}

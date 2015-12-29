@@ -5,15 +5,15 @@ var extend = require("extend");
 
 var defaultGetter = function(object, property) {
    return object[property];
-}
+};
 
 var defaultSetter = function(object, property, value) {
    object[property] = value;
-}
+};
 
 var linearEasing = function(t) {
    return t;
-}
+};
 
 var defaultOptions = {
    object: null, // must provide

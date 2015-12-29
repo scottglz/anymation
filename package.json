@@ -8,7 +8,7 @@
     "cover": "browserify -t coverify test/index-test.js --bare | node | coverify",
     "lint": "jshint .",
     "validate": "npm ls",
-    "preflight": "npm run validate && npm run lint && npm run test && npm run cover"
+    "preflight": "npm run validate && npm run lint && npm run test"
   },
   "keywords": [
     "animation",
@@ -20,7 +20,6 @@
   "author": "Scott Glazer",
   "license": "MIT",
   "dependencies": {
-    "eases": "^1.0.8",
     "extend": "^3.0.0",
     "right-now": "^1.0.0"
   },

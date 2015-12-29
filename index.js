@@ -12,7 +12,7 @@ var defaultOptions = {
    //onDone
    //onCancel
    //cancelable
-}
+};
 
 function Animation(options) {
    if (!(this instanceof Animation))
@@ -41,7 +41,7 @@ Animation.prototype = {
       var obj = this.object;
       for (var key in this.props) {
          if (obj.hasOwnProperty(key)) {
-            var value = this.props[key];
+            var value = this.props[key], startValue;
             if (Array.isArray(value)) {
                // Specified step values
                var nValues = value.length;
@@ -52,12 +52,12 @@ Animation.prototype = {
             }
             else if (typeof value === "function") 
             {
-               var startValue = this.animationStartValues[key];
+               startValue = this.animationStartValues[key];
                obj[key] = value(t, startValue);
             }
             else if (Number.isFinite(value))
             {
-               var startValue = this.animationStartValues[key];
+               startValue = this.animationStartValues[key];
                var newValue = startValue + t*(value - startValue);
                obj[key] = newValue;
             }

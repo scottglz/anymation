@@ -6,7 +6,7 @@ var Animation = require("..");
 test("Animation requires object", function(t) {
    t.plan(1);
    t.throws(function() { 
-      var animation = new Animation({});
+      new Animation({});
    });
 });
 
@@ -40,7 +40,7 @@ test("Update without param uses now()", function(t) {
    });
    setTimeout(function() {
       animation.update();
-      t.ok(obj.v >= .5 && obj.v <= 1, "updated appropriately");
+      t.ok(obj.v >= 0.5 && obj.v <= 1, "updated appropriately");
    }, 50);
 
 });
@@ -49,7 +49,7 @@ test("Continuous Numeric values", function(t) {
    t.plan(4);
    var obj = {
       x: 100
-   }
+   };
    var animation = new Animation({
       object: obj,
       duration: 100,
@@ -92,7 +92,7 @@ test("Array values", function(t) {
    var startTime = animation.startTime;
    animation.update(startTime);
    t.equals(obj.name, "one");
-   animation.update(startTime + .99);
+   animation.update(startTime + 0.99);
    t.equals(obj.name, "one");
    animation.update(startTime + 1);
    t.equals(obj.name, "two");

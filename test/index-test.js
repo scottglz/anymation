@@ -126,3 +126,51 @@ test("Function values", function(t) {
 
 });
 
+test("Getter & setter", function(t) {
+   t.plan(1);
+   var obj = {
+      x2: 17
+   };
+
+   var animation = new Animation({
+      object: obj,
+      duration: 100,
+      getter: function(obj, prop) {
+         return obj[prop + "2"];
+      },
+      setter: function(obj, prop, val) {
+         obj[prop + "2"] = val;
+      },
+      props: {
+         x: 19
+      }
+   });
+
+   var startTime = animation.startTime;
+   animation.update(startTime + 50);
+   t.equals(obj.x2, 18);
+});
+
+test("Easing", function(t) {
+   t.plan(2);
+   var obj = {
+      x: 10
+   };
+
+   var animation = new Animation({
+      object: obj,
+      duration: 100,
+      easing: function(t) {
+         return t <= .9 ? 2 * t : t;
+      },
+      props: {
+         x: 20
+      }
+   });
+
+   var startTime = animation.startTime;
+   animation.update(startTime + 75);
+   t.equals(obj.x, 25); // Yes, easing functions can send things past the range
+   animation.update(startTime + 100);
+   t.equals(obj.x, 20);
+});

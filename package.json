@@ -20,6 +20,7 @@
   "author": "Scott Glazer",
   "license": "MIT",
   "dependencies": {
+    "eases": "^1.0.8",
     "extend": "^3.0.0",
     "right-now": "^1.0.0"
   },

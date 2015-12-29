@@ -7,7 +7,8 @@
     "test": "tape test/*.js",
     "cover": "browserify -t coverify test/index-test.js --bare | node | coverify",
     "lint": "jshint .",
-    "validate": "npm ls"
+    "validate": "npm ls",
+    "preflight": "npm run validate && npm run lint && npm run test && npm run cover"
   },
   "keywords": [
     "animation",
@@ -24,17 +25,11 @@
   },
   "devDependencies": {
     "coverify": "^1.4.1",
-    "tape": "^4.4.0",
-    "precommit-hook": "^3.0.0"
+    "jshint": "^2.8.0",
+    "tape": "^4.4.0"
   },
   "repository": {
     "type": "git",
     "url": "https://github.com/scottglz/anymation"
-  },
-  "pre-commit": [
-    "lint",
-    "validate",
-    "test",
-    "cover"
-  ]
+  }
 }

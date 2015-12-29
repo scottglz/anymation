@@ -1,5 +1,6 @@
 'use strict';
 
+
 var test = require("tape");
 var Animation = require("..");
 

@@ -11,7 +11,6 @@ var defaultOptions = {
    cancelable: true
    //onDone
    //onCancel
-   //cancelable
 };
 
 function Animation(options) {

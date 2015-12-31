@@ -11,18 +11,46 @@ var defaultSetter = function(object, property, value) {
    object[property] = value;
 };
 
-var linearEasing = function(t) {
-   return t;
+var identity = function(x) {
+   return x;
+}
+
+var identityTransform = {
+   read: identity,
+   write: identity
 };
+
+var linearEasing = identity;
+
+function updateProp(obj, name, options, t) {
+   var value = options.transformedValue, 
+       setter = options.setter,
+       teased = options.easing(t);
+   if (options.values) {
+      // step values
+      var nValues = options.values.length;
+      var index = Math.floor(teased * nValues);
+      if (index >= nValues)
+         index = nValues-1;
+      setter(obj, name, options.values[index]);
+   }
+   else if (options.valueFn) {
+      setter(obj, name, options.valueFn(teased, options.startValue));
+   }
+   else if (Number.isFinite(value)) {
+      var newValue = options.startValue + teased * (value - options.startValue);
+      setter(obj, name, options.transform.write(newValue));
+   }   
+}
 
 var defaultOptions = {
    object: null, // must provide
    name: "anonymous",
    duration: 1000,
-   props: {},
    cancelable: true,
    getter: defaultGetter,
    setter: defaultSetter,
+   transform: identityTransform,
    easing: linearEasing
    //onDone
    //onCancel
@@ -37,67 +65,57 @@ function Animation(options) {
       throw new Error("Animation requires object");
    
    this.startTime = now();
-
-   this.animationStartValues = {};
-   for (var key in this.props) {
-      var propVal = this.props[key], getter;
-      if (typeof propVal !== "object" || propVal === null || Array.isArray(propVal)) {
-         this.props[key] = {
-            value: this.props[key]
-         };
-         getter = this.getter;
-      }
-      else {
-         getter = propVal.getter || this.getter;
-      }
-
-      this.animationStartValues[key] = getter(this.object, key);
-   }
+   this.props = Object.create(null);
 }
 
 Animation.prototype = {
+   addProp: function(name, options) {
+      
+      var fullOptions = extend({
+         setter: this.setter,
+         easing: this.easing,
+         getter: this.getter,
+         transform: this.transform
+      }, options);
+      
+      fullOptions.transformedValue = fullOptions.transform.read(fullOptions.value);
+      fullOptions.startValue = fullOptions.transform.read(fullOptions.getter(this.object, name));
+      this.props[name] = fullOptions; 
+      return this;
+   },
+
+   to: function(name, value) {
+      return this.addProp(name, { value: value });
+   },
+
+   values: function(name, array) {
+      return this.addProp(name, { values: array });
+   },
+
+   fn: function(name, fn) {
+      return this.addProp(name, { valueFn: fn});
+   },
+
    update: function(timeNow) {
       timeNow = timeNow || now();
       var t = (timeNow - this.startTime) / this.duration;
       if (t > 1)
          t = 1;
 
-      var obj = this.object;
-      for (var key in this.props) {
-         var spec = this.props[key],
-             value = spec.value, 
-             setter = spec.setter || this.setter,
-             easing = spec.easing|| this.easing,
-             teased = easing(t),
-             startValue;
-         if (Array.isArray(value)) {
-            // Specified step values
-            var nValues = value.length;
-            var index = Math.floor(teased * nValues);
-            if (index >= nValues)
-               index = nValues-1;
-            setter(obj, key, value[index]);
-         }
-         else if (typeof value === "function") 
-         {
-            startValue = this.animationStartValues[key];
-            setter(obj, key, value(teased, startValue));
-         }
-         else if (Number.isFinite(value))
-         {
-            startValue = this.animationStartValues[key];
-            var newValue = startValue + teased * (value - startValue);
-            setter(obj, key, newValue);
-         }
+      var obj = this.object, 
+          props = this.props;
+      for (var key in props) {
+         updateProp(obj, key, props[key], t);
       }
+
       if (t === 1) {
          this.done = true;
          if (this.onDone)
             this.onDone(this.object);
          return false;
       }
-      return true;
-      
+
+      return true;  
    },
 
    cancel: function() {

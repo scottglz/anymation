@@ -3,54 +3,42 @@
 var now = require("right-now");
 var extend = require("extend");
 
-var defaultGetter = function(object, property) {
-   return object[property];
-};
-
 var defaultSetter = function(object, property, value) {
    object[property] = value;
 };
 
-var identity = function(x) {
-   return x;
-}
 
-var identityTransform = {
-   read: identity,
-   write: identity
+var linearEasing = function(x) {
+   return x;
 };
 
-var linearEasing = identity;
-
-function updateProp(obj, name, options, t) {
-   var value = options.transformedValue, 
+function updateProp(name, options, t) {
+   var obj = options.object,
        setter = options.setter,
        teased = options.easing(t);
-   if (options.values) {
+   if (options.discreteValues) {
       // step values
-      var nValues = options.values.length;
+      var nValues = options.discreteValues.length;
       var index = Math.floor(teased * nValues);
       if (index >= nValues)
          index = nValues-1;
-      setter(obj, name, options.values[index]);
+      setter(obj, name, options.discreteValues[index]);
    }
    else if (options.valueFn) {
-      setter(obj, name, options.valueFn(teased, options.startValue));
+      setter(obj, name, options.valueFn(teased));
    }
-   else if (Number.isFinite(value)) {
-      var newValue = options.startValue + teased * (value - options.startValue);
-      setter(obj, name, options.transform.write(newValue));
+   else if (options.tween) {
+      var start = options.tween[0], end = options.tween[1];
+      var newValue = start + teased * (end - start);
+      setter(obj, name, newValue);
    }   
 }
 
 var defaultOptions = {
    object: null, // must provide
-   name: "anonymous",
    duration: 1000,
    cancelable: true,
-   getter: defaultGetter,
    setter: defaultSetter,
-   transform: identityTransform,
    easing: linearEasing
    //onDone
    //onCancel
@@ -72,24 +60,21 @@ Animation.prototype = {
    addProp: function(name, options) {
       
       var fullOptions = extend({
+         object: this.object,
          setter: this.setter,
-         easing: this.easing,
-         getter: this.getter,
-         transform: this.transform
+         easing: this.easing
       }, options);
       
-      fullOptions.transformedValue = fullOptions.transform.read(fullOptions.value);
-      fullOptions.startValue = fullOptions.transform.read(fullOptions.getter(this.object, name));
       this.props[name] = fullOptions; 
       return this;
    },
 
-   to: function(name, value) {
-      return this.addProp(name, { value: value });
+   tween: function(name, from, to) {
+      return this.addProp(name, { tween: [from, to] });
    },
 
-   values: function(name, array) {
-      return this.addProp(name, { values: array });
+   discrete: function(name, array) {
+      return this.addProp(name, { discreteValues: array });
    },
 
    fn: function(name, fn) {
@@ -102,10 +87,9 @@ Animation.prototype = {
       if (t > 1)
          t = 1;
 
-      var obj = this.object, 
-          props = this.props;
+      var props = this.props;
       for (var key in props) {
-         updateProp(obj, key, props[key], t);
+         updateProp(key, props[key], t);
       }
 
       if (t === 1) {

@@ -35,7 +35,7 @@ test("Update without param uses now()", function(t) {
    var animation = new Animation({
       object: obj,
       duration: 100
-   }).to("q", 1);
+   }).tween("q", 0, 1);
    setTimeout(function() {
       animation.update();
       t.ok(obj.q >= 0.5 && obj.q <= 1, "updated appropriately");
@@ -46,7 +46,6 @@ test("Update without param uses now()", function(t) {
 test("Continuous Numeric values", function(t) {
    t.plan(4);
    var obj = {
-      x: 100
    };
    var animation = new Animation({
       object: obj,
@@ -54,7 +53,7 @@ test("Continuous Numeric values", function(t) {
       onDone: function(obj2) {
          t.equals(obj2, obj, "onDone() called with animated obj param");
       }
-   }).to("x", -400);
+   }).tween("x", 100, -400);
 
    var startTime = animation.startTime;
    t.ok(startTime > 0, "startTime > 0");
@@ -70,16 +69,16 @@ test("Continuous Numeric values", function(t) {
    t.equals(obj.x, -400, "x finished correctly");
 });
 
-test("Step values", function(t) {
+test("Discrete values", function(t) {
    t.plan(6);
    var obj = {
-      name: "one"
+      name: "zero"
    };
 
    var animation = new Animation({
       object: obj,
       duration: 3
-   }).values("name", ["one", "two", "three"]);
+   }).discrete("name", ["one", "two", "three"]);
 
    var startTime = animation.startTime;
    animation.update(startTime);
@@ -114,7 +113,7 @@ test("Function values", function(t) {
 
 });
 
-test("Getter & setter", function(t) {
+test("Setter", function(t) {
    t.plan(1);
    var obj = {
       x2: 17
@@ -123,13 +122,10 @@ test("Getter & setter", function(t) {
    var animation = new Animation({
       object: obj,
       duration: 100,
-      getter: function(obj, prop) {
-         return obj[prop + "2"];
-      },
       setter: function(obj, prop, val) {
          obj[prop + "2"] = val;
       }
-   }).to("x", 19);
+   }).tween("x", obj.x2, 19);
 
    var startTime = animation.startTime;
    animation.update(startTime + 50);
@@ -148,37 +144,11 @@ test("Easing", function(t) {
       easing: function(t) {
          return t <= .9 ? 2 * t : t;
       }
-   }).to("x", 20);
+   }).tween("x", obj.x, 20);
 
    var startTime = animation.startTime;
    animation.update(startTime + 75);
    t.equals(obj.x, 25); // Yes, easing functions can send things past the range
    animation.update(startTime + 100);
    t.equals(obj.x, 20);
-});
-
-test("Transform", function(t) {
-   t.plan(1);
-   var obj = {
-      left: "20px"
-   };
-
-   var animation = new Animation({
-      object: obj,
-      duration: 3000,
-      transform: {
-         read: function(value) {
-            return +(value.replace("px", ""));
-         },
-         write: function(value) {
-            return value + "px";
-         }
-      }
-   }).to("left", "40px");
-
-   var startTime = animation.startTime;
-   animation.update(startTime + 1500); 
-   t.equals(obj.left, "30px");  
-
-
 });

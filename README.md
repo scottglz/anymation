@@ -2,6 +2,14 @@
 
 > Simple stand-alone animation / tweening library. Currently works in node or in browsers w/ [browserify](http://browserify.org/).
 
+## Installation
+
+For node or browserify,
+
+> npm install browserify
+
+For a manual configuration system, grab dist/anymation.js or dist/anymation-min.js from the git repository. These export the Anymation constructor through a require.js define() if you are using it, otherwise they add the Anymation constructor to the global window object.
+
 ## Basic use
 
 ```javascript

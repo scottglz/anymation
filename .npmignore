@@ -1,2 +1,4 @@
 # ignore test folder
 test
+# ignore dist folder
+dist

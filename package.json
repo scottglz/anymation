@@ -8,7 +8,10 @@
     "cover": "browserify -t coverify test/index-test.js --bare | node | coverify",
     "lint": "jshint .",
     "validate": "npm ls",
-    "preflight": "npm run validate && npm run lint && npm run test"
+    "preflight": "npm run validate && npm run lint && npm run test",
+    "build-debug": "browserify --standalone anymation index.js > dist/anymation.js",
+    "build-min": "browserify --standalone anymation index.js | uglifyjs -c -m > dist/anymation-min.js",
+    "build": "npm run preflight && npm run build-debug && npm run build-min"
   },
   "keywords": [
     "animation",
@@ -24,9 +27,11 @@
     "right-now": "^1.0.0"
   },
   "devDependencies": {
+    "browserify": "^12.0.1",
     "coverify": "^1.4.1",
     "jshint": "^2.8.0",
-    "tape": "^4.4.0"
+    "tape": "^4.4.0",
+    "uglify-js": "^2.6.1"
   },
   "repository": {
     "type": "git",

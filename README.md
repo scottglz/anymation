@@ -1,6 +1,8 @@
 # anymation
 
- Simple stand-alone animation / tweening library for node or browsers.
+Simple stand-alone animation / tweening library for node or browsers.
+
+[![Build Status](https://travis-ci.org/scottglz/anymation.svg?branch=master)](https://travis-ci.org/scottglz/anymation)
 
 ### Installation
 

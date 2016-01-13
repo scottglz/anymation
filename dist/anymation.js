@@ -13,10 +13,11 @@ var linearEasing = function(x) {
    return x;
 };
 
-function updateProp(name, options, t) {
+function updateProp(options, t) {
    var obj = options.object,
        setter = options.setter,
-       teased = options.easing(t);
+       teased = options.easing(t),
+       name = options.propName;
    if (options.discreteValues) {
       // step values
       var nValues = options.discreteValues.length;
@@ -54,7 +55,7 @@ function Animation(options) {
       throw new Error("Animation requires object");
    
    this.startTime = now();
-   this.props = Object.create(null);
+   this.props = [];
 }
 
 Animation.prototype = {
@@ -66,7 +67,8 @@ Animation.prototype = {
          easing: this.easing
       }, options);
       
-      this.props[name] = fullOptions; 
+      fullOptions.propName = name;
+      this.props.push(fullOptions); 
       return this;
    },
 
@@ -88,9 +90,9 @@ Animation.prototype = {
       if (t > 1)
          t = 1;
 
-      var props = this.props;
-      for (var key in props) {
-         updateProp(key, props[key], t);
+      var props = this.props, len = props.length;
+      for (var i=0; i < len; i++) {
+         updateProp(props[i], t);
       }
 
       if (t === 1) {

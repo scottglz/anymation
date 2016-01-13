@@ -1,6 +1,6 @@
 {
   "name": "anymation",
-  "version": "1.0.2",
+  "version": "1.1.0",
   "description": "Simple & easy animation/tweener",
   "main": "index.js",
   "scripts": {
